@@ -1,5 +1,8 @@
 import React from 'react'
 import './style.css'
+import speakLogo from '../../assets/speaklogo.png'
+import banner from '../../assets/main-banner.png'
+import singleImage from '../../assets/single-image.jpg'
 
 const Home = () => {
   return (
@@ -11,7 +14,7 @@ const Home = () => {
                 <div className="grid">
                     <div className="main-logo">
                     <a href="index.html">
-                        <img src="images/main-logo.png" alt="logo" />
+                        <img src={speakLogo} alt="logo" />
                     </a>
                     </div>
                     <nav id="navbar">
@@ -52,24 +55,6 @@ const Home = () => {
                             data-effect="Testimonial"
                             >
                             Testimonial
-                            </a>
-                        </li>
-                        <li className="menu-item">
-                            <a
-                            href="#latest-blog"
-                            className="nav-link"
-                            data-effect="Latest Blog"
-                            >
-                            Latest Blog
-                            </a>
-                        </li>
-                        <li className="menu-item ">
-                            <a
-                            href="https://templatesjungle.gumroad.com/l/creatify-digital-marketing-website-template"
-                            className="nav-link"
-                            >
-                            {" "}
-                            <b> GET PRO </b>{" "}
                             </a>
                         </li>
                         </ul>
@@ -113,14 +98,14 @@ const Home = () => {
       {/*banner-content*/}
       <figure>
         <img
-          src="images/main-banner.png"
+          src={banner}
           alt="banner"
           className="banner-image"
         />
       </figure>
     </div>
   </section>
-  
+
   <section id="about">
     <div className="container">
       <div className="row">
@@ -129,7 +114,7 @@ const Home = () => {
             <div className="grid">
               <figure>
                 <img
-                  src="images/single-image.jpg"
+                  src={singleImage}
                   alt="book"
                   className="single-image"
                 />
