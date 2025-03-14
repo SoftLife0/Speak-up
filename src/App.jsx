@@ -1,11 +1,17 @@
-import { useState } from 'react'
-import Register from './pages/Register'
+import React from 'react'
+import { RouterProvider } from 'react-router-dom'
+import { router } from './router.jsx'
+import { AuthContextProvider } from './context/AuthContext.jsx'
 
 function App() {
 
   return (
     <div>
-      <Register />
+      <>
+        <AuthContextProvider>
+          <RouterProvider router={router} />
+        </AuthContextProvider>
+      </>
     </div>
   )
 }
