@@ -1,8 +1,15 @@
 import React from 'react'
 import './style.css'
-import speakLogo from '../../assets/speaklogo.png'
-import banner from '../../assets/main-banner.png'
-import singleImage from '../../assets/single-image.jpg'
+import speakLogo from '../../assets/images/speaklogo.png'
+import banner from '../../assets/images/main-banner.png'
+import singleImage from '../../assets/images/single-image.jpg'
+import pres from '../../assets/images/telehealth-service.png'
+import meds from '../../assets/images/pharmacy.png'
+import symp from '../../assets/images/health-assessment.png'
+import tips from '../../assets/images/healthy.png'
+import remind from '../../assets/images/pills.png'
+import consult from '../../assets/images/counseling.png'
+import support from '../../assets/images/healthcare.png'
 
 const Home = () => {
   return (
@@ -127,7 +134,7 @@ const Home = () => {
                 </div>
                 <div className="detail-wrap">
                   <p>
-                  We believe that accessible and reliable healthcare starts with the right connections. That’s why we provide a secure, user-friendly space where individuals can seek expert advice on medications, symptoms, and general health inquiries—all from the comfort of their homes.
+                  We believe that accessible and reliable healthcare starts with the right connections. That’s why we provide a secure, user-friendly space where individuals can seek expert advice on medications, symptoms, and general health inquiries all from the comfort of their homes.
                   </p>
                   <div className="btn-wrap">
                     <a href="#" className="btn-accent">
@@ -175,36 +182,36 @@ const Home = () => {
               <div className="service-grid grid" data-aos="fade-up">
                 <div className="column odd-column">
                   <div className="icon-box">
-                    <img src="images/camera.png" alt="branding" />
-                    <div className="title">Photography</div>
+                    <img src={pres} alt="branding" />
+                    <div className="title">Prescription Support</div>
                   </div>
                   <div className="icon-box">
-                    <img src="images/animation.png" alt="animation" />
-                    <div className="title">Animation</div>
+                    <img src={meds} alt="animation" />
+                    <div className="title">Treatment Guidance</div>
                   </div>
                 </div>
                 <div className="column">
                   <div className="icon-box">
-                    <img src="images/branding.png" alt="branding" />
-                    <div className="title">Branding</div>
+                    <img src={symp} alt="branding" />
+                    <div className="title">Symptom Assessment</div>
                   </div>
                   <div className="icon-box">
-                    <img src="images/data-research.png" alt="animation" />
-                    <div className="title">Business plan</div>
+                    <img src={tips} alt="animation" />
+                    <div className="title">Wellness Advice</div>
                   </div>
                   <div className="icon-box">
-                    <img src="images/seo.png" alt="animation" />
-                    <div className="title">Research</div>
+                    <img src={remind} alt="animation" />
+                    <div className="title">Medication Reminders</div>
                   </div>
                 </div>
                 <div className="column odd-column">
                   <div className="icon-box">
-                    <img src="images/code.png" alt="branding" />
-                    <div className="title">Development</div>
+                    <img src={consult} alt="branding" />
+                    <div className="title">Virtual Consultations </div>
                   </div>
                   <div className="icon-box">
-                    <img src="images/creative.png" alt="animation" />
-                    <div className="title">UI/UX design</div>
+                    <img src={support} alt="branding" />
+                    <div className="title">24/7 Health Support </div>
                   </div>
                 </div>
               </div>
@@ -225,13 +232,11 @@ const Home = () => {
           <div className="grid">
             <div className="section-header">
               <h2 className="section-subtitle liner">Newsletter</h2>
-              <h3 className="section-title">Subscribe to our newsletter</h3>
+              <h3 className="section-title">Stay Informed, Stay Healthy! 🩺</h3>
             </div>
             <div className="subscribe-content" data-aos="fade-up">
               <p>
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Diam
-                tincid quisque faucibus velit felis tincidunt. Turpis platea sed
-                arcu.
+                Subscribe to our newsletter for expert health tips, medication insights, and the latest updates in pharmacy care. Get exclusive access to wellness advice, prescription reminders, and special features—all delivered straight to your inbox!
               </p>
               <form id="form">
                 <input
