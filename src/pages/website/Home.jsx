@@ -254,76 +254,13 @@ const Home = () => {
     </div>
   </section>
 
-  <footer id="footer">
-    <div className="container">
-      <div className="row">
-        <div className="inner-content">
-          <div className="footer-menu-list" data-aos="fade-up">
-            <div className="grid">
-              <div className="footer-menu">
-                <h3>Explore</h3>
-                <ul className="menu-list">
-                  <li className="menu-item">
-                    <a href="#">Home</a>
-                  </li>
-                  <li className="menu-item">
-                    <a href="#">About Us</a>
-                  </li>
-                  <li className="menu-item">
-                    <a href="#">Works</a>
-                  </li>
-                  <li className="menu-item">
-                    <a href="#">Blog</a>
-                  </li>
-                  <li className="menu-item">
-                    <a href="#">Contact Us</a>
-                  </li>
-                </ul>
-              </div>
-              <div className="footer-menu">
-                <h3>Any queries?</h3>
-                <ul className="menu-list">
-                  <li className="menu-item">
-                    <strong>Our Locatio</strong>
-                    Tribeca, New York, USA
-                  </li>
-                  <li className="menu-item">
-                    <strong>Call Us</strong>
-                    (+880)244-35264
-                  </li>
-                  <li className="menu-item">
-                    <strong>Send Us Mail</strong>
-                    <a href="#">support@example.com</a>
-                  </li>
-                </ul>
-              </div>
-              <div className="footer-item">
-                <h2>Got a project? Let’s talk.</h2>
-                <p>
-                  Just feel free to contact if you wanna collaborate with us, or
-                  simply have a conversation.
-                </p>
-                <div className="btn-wrap">
-                  <a href="#" className="btn-accent">
-                    Contact us
-                  </a>
-                </div>
-              </div>
-            </div>
-          </div>
-          {/*footer-menu-list*/}
-        </div>
-        {/*inner-content*/}
-      </div>
-    </div>
-  </footer>
+
   <div id="footer-bottom">
     <div className="container">
       <div className="grid">
         <div className="copyright">
           <p>
-            © 2021 <a href="https://templatesjungle.com/">TemplatesJungle.</a>{" "}
-            All rights reserved.
+            © 2025 <a href="#">Mr.Softlife</a>{" "}
           </p>
         </div>
         <div className="social-links">
