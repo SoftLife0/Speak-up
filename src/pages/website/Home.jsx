@@ -10,6 +10,7 @@ import tips from '../../assets/images/healthy.png'
 import remind from '../../assets/images/pills.png'
 import consult from '../../assets/images/counseling.png'
 import support from '../../assets/images/healthcare.png'
+import { Link } from 'react-router-dom'
 
 const Home = () => {
   return (
@@ -96,9 +97,9 @@ const Home = () => {
         
         </p>
         <div className="btn-wrap">
-          <a href="#" className="btn-accent">
+          <Link to="/login" className="btn-accent">
           Share Your Concern
-          </a>
+          </Link>
         </div>
       </div>
       {/*banner-content*/}
