@@ -39,7 +39,7 @@ const Login = () => {
 
                 <h2 className='text-xl font-bold text-center pb-2'>Login to Your Account</h2>
                 <p className='text-center text-sm mb-4'>
-                    Don't have an account? <Link to="/register" className='text-blue-500'>Sign Up</Link>
+                    Don't have an account ? <Link to="/register" className='text-blue-500'>Sign Up</Link>
                 </p>
                 <div className='flex flex-col gap-4'>
                     <label>Email</label>
