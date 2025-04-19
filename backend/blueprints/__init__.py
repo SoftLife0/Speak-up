@@ -31,4 +31,7 @@ jwt = JWTManager(app)
 from blueprints.inventory.routes import inventory
 app.register_blueprint(inventory, url_prefix='/api/inventory')
 
+from blueprints.auth.routes import auth
+app.register_blueprint(auth, url_prefix='/api/auth')
+
 # app.register_blueprint(utils)

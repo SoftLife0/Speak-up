@@ -1,4 +1,3 @@
-import json
 from blueprints import db
 from datetime import datetime, timedelta
 
