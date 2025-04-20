@@ -17,12 +17,12 @@ def register():
     password = data.get("password")
 
     if not username or not email or not password:
-        return jsonify(ApiResponse.error("All fields are required")), 400
+        return ApiResponse.error("All fields are required"), 400
 
     existing_user = User.query.filter((User.email == email)).first()
 
     if existing_user:
-        return jsonify(ApiResponse.error("User already exists")), 400
+        return ApiResponse.error("User already exists"), 400
 
     hashed_password = generate_password_hash(password, method='pbkdf2:sha256', salt_length=8)
     new_user = User(username=username, email=email, password=hashed_password)
@@ -31,7 +31,7 @@ def register():
     db.session.add(new_user)
     db.session.commit()
 
-    return jsonify(ApiResponse.success(data=response_data, message="User registered successfully")), 201
+    return ApiResponse.success(data=response_data, message="User registered successfully"), 201
 
 
 @auth.route('/login', methods=['POST'])
@@ -41,11 +41,11 @@ def login():
     password = data.get("password")
 
     if not email or not password:
-        return jsonify(ApiResponse.error("Email and password are required")), 400
+        return ApiResponse.error("Email and password are required"), 400
 
     user = User.query.filter_by(email=email).first()
     if not user or not check_password_hash(user.password, password):
-        return jsonify(ApiResponse.error("Invalid credentials")), 401
+        return ApiResponse.error("Invalid credentials"), 401
 
     access_token = create_access_token(identity=user.id, expires_delta=timedelta(days=1))
 
@@ -61,4 +61,4 @@ def login():
         "user": user_data
     }
 
-    return jsonify(ApiResponse.success(response_data, message="Login successful")), 200
+    return ApiResponse.success(response_data, message="Login successful"), 200
