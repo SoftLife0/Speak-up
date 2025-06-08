@@ -191,7 +191,7 @@ const Home = () => {
                     <div className="title">Treatment Guidance</div>
                   </div>
                 </div>
-                <div className="column">
+                <div className="column odd-column">
                   <div className="icon-box">
                     <img src={symp} alt="branding" />
                     <div className="title">Symptom Assessment</div>
@@ -200,12 +200,12 @@ const Home = () => {
                     <img src={tips} alt="animation" />
                     <div className="title">Wellness Advice</div>
                   </div>
-                  <div className="icon-box">
+                  {/* <div className="icon-box">
                     <img src={remind} alt="animation" />
                     <div className="title">Medication Reminders</div>
-                  </div>
+                  </div> */}
                 </div>
-                <div className="column odd-column">
+                {/* <div className="column odd-column">
                   <div className="icon-box">
                     <img src={consult} alt="branding" />
                     <div className="title">Virtual Consultations </div>
@@ -214,7 +214,7 @@ const Home = () => {
                     <img src={support} alt="branding" />
                     <div className="title">24/7 Health Support </div>
                   </div>
-                </div>
+                </div> */}
               </div>
             </div>
             {/*grid*/}

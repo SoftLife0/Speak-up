@@ -46,8 +46,8 @@ def login():
     user = User.query.filter_by(email=email).first()
     if not user or not check_password_hash(user.password, password):
         return ApiResponse.error("Invalid credentials"), 401
-
-    access_token = create_access_token(identity=user.id, expires_delta=timedelta(days=1))
+    
+    access_token = create_access_token(identity=str(user.email), expires_delta=timedelta(days=1))
 
     user_data = {
         "id": user.id,

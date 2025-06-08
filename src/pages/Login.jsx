@@ -1,34 +1,43 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { UserAuth } from '../context/AuthContext';
 import logo from '../assets/images/speaklogo.png';
+import { apiService } from '../services/apiService';
+import { toast } from 'react-toastify';
+import { useUser } from '../context/userContext';
 
 const Login = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
+    const { loginUser } = useUser()
     
-    const { login } = UserAuth();
     const navigate = useNavigate();
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         setError('');
         setLoading(true);
+
+        const cleanData = { email, password };
+
         try {
-            const result = await login(email, password);
-            if (result.success) {
-                navigate('/dashboard');
-            } else {
-                setError(result.error);
-            }
+            const response = await apiService.post('/login', cleanData);
+            console.log("Login response:", response);
+            const { user } = response?.data
+            loginUser(user);
+            toast.success(response?.message, { position: "top-right", hideProgressBar: true });
+            navigate('/dashboard');
         } catch (error) {
-            setError("An unexpected error occurred.");
+            console.log("Login error:", error);
+            const errorMessage = error?.response?.data?.error || "An error occurred during login.";
+            toast.error(errorMessage);
+            setError(errorMessage);
         } finally {
             setLoading(false);
         }
     };
+
 
     return (
         <div className="flex items-center justify-center h-screen bg-gray-100">

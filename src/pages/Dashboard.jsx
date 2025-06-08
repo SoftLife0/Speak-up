@@ -1,31 +1,73 @@
-import React from 'react'
+import { useState, useEffect, use } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import { UserAuth } from '../context/AuthContext'
+import { useUser } from '../context/userContext'
+import { apiService } from '../services/apiService'
 
-const Dashboard = () => {
+
+const Dashboard = ({user}) => {
     const navigate = useNavigate()
-    const { session, logout} = UserAuth()
-    console.log(session)
+    const { logoutUser } = useUser()
+
+    const [summary, setSummary] = useState(null);
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState(null);
+    const [shouldRefetch, setShouldRefecth] = useState(false);
+
+    const fetchSummary = async () => {
+        setLoading(true)
+        setShouldRefecth(true)
+
+        try {
+            const response = await apiService.get('/dashboard');
+            setSummary(response.data);
+        } catch (error) {
+            setError(error.message);
+            
+        } finally {
+            setLoading(false)
+            setShouldRefecth(false)
+        }
+    };
+
+    useEffect(() => {
+        if (shouldRefetch) {
+            fetchSummary();
+        }
+    }, [shouldRefetch]);
 
     const handleLogout = async (e) => {
-        e.preventDefault();
-        try {
-            await logout()
-            navigate('/login')
-        } catch (error) {
-            console.log(error)
-        }
+        logoutUser(user)
     }
-  return (
-    <div>
-        <h5>Welcome, {session?.user?.email}</h5>
-        <div>
-            <p className='hover:cursor-pointer border inline-block px-4 py-3 mt-4' onClick={handleLogout}>
-                Sign out
-            </p>
+
+
+    if (loading) return <p>Loading...</p>
+    if (error) return <p>Error: {error}</p>
+
+    return (
+        <div className="p-6">
+            <h2 className="text-xl font-bold mb-4">Welcome, {user?.email}</h2>
+
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                <div className="bg-white p-4 shadow rounded">
+                    <p className="text-gray-500">Users</p>
+                    <h3 className="text-lg font-bold">{summary?.total_inventory}</h3>
+                </div>
+                <div className="bg-white p-4 shadow rounded">
+                    <p className="text-gray-500">Products</p>
+                    <h3 className="text-lg font-bold">{summary?.total_products}</h3>
+                </div>
+                <div className="bg-white p-4 shadow rounded">
+                    <p className="text-gray-500">Inventory Value</p>
+                    <h3 className="text-lg font-bold">₦{summary?.total_categories}</h3>
+                </div>
+                <div className="bg-white p-4 shadow rounded">
+                    <p className="text-gray-500">Low Stock Alerts</p>
+                    <h3 className="text-lg font-bold text-red-500">{summary?.low_stock}</h3>
+                </div>
+            </div>
         </div>
-    </div>
-  )
+    )
 }
 
 export default Dashboard
+

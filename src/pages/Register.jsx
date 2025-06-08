@@ -1,24 +1,29 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { UserAuth } from '../context/AuthContext';
 import logo from '../assets/images/speaklogo.png';
+import { apiService } from '../services/apiService';
 
 const Register = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [full_name, setFull_name] = useState('');
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
     
-    const { register } = UserAuth();
     const navigate = useNavigate();
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         setError('');
         setLoading(true);
+
+        const signupData = { email, password, full_name, role: "patient" };
+        console.log("Data", signupData)
+
         try {
-            const result = await register(email, password);
+            const result = await apiService.post('/register', signupData);
             if (result.success) {
+                alert("Registered successfully!");
                 navigate('/dashboard');
             } else {
                 setError(result.error);
@@ -42,8 +47,10 @@ const Register = () => {
                 </p>
                 <div className='flex flex-col gap-4'>
                     <label>Email</label>
-                    <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} 
-                        className='border rounded-md p-2' placeholder='example@gmail.com' required />
+                    <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} className='border rounded-md p-2' placeholder='example@gmail.com' required />
+
+                    <label>Full Name</label>
+                    <input type="text" value={full_name} onChange={(e) => setFull_name(e.target.value)} className='border rounded-md p-2' placeholder='John Doe' required />
                     <label>Password</label>
                     <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} 
                         className='border rounded-md p-2' placeholder='********' required />

@@ -13,10 +13,13 @@ class User(db.Model):
     password = db.Column(db.String(200), nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     
+    
 class Category(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(100), nullable=False)
+    name = db.Column(db.String(50))
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    
+    
     
 class Product(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -26,7 +29,7 @@ class Product(db.Model):
     min_stock = db.Column(db.Integer, default=0)  # for alerting
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
-    category_id = db.Column(db.Integer, db.ForeignKey('category.id'), nullable=False)
+    category_id = db.Column(db.Integer, db.ForeignKey('category.id', name='product_category', ondelete='CASCADE'), nullable=False)
     category = db.relationship('Category', backref=db.backref('products', lazy=True))
 
 
