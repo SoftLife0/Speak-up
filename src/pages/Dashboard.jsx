@@ -1,11 +1,13 @@
 import { useState, useEffect } from 'react'
 import { useUser } from '../context/userContext'
 import { apiService } from '../services/apiService'
+import logo from "../assets/images/speaklogo.png"
 
 const Dashboard = ({ user }) => {
   const { logoutUser } = useUser()
   const [summary, setSummary] = useState(null)
   const [products, setProducts] = useState([])
+  const [categories, setCategories] = useState([])
   const [search, setSearch] = useState('')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
@@ -30,6 +32,15 @@ const Dashboard = ({ user }) => {
     }
   }
 
+  const fetchCategories = async () => {
+    try {
+      const res = await apiService.get('/categories')
+      setCategories(res.data)
+    } catch (err) {
+      setError(err.message)
+    }
+  }
+
   const handleCreateProduct = async () => {
     try {
       await apiService.post('/create_product', formData)
@@ -44,6 +55,7 @@ const Dashboard = ({ user }) => {
   useEffect(() => {
     fetchSummary()
     fetchProducts()
+    fetchCategories()
   }, [])
 
   const filteredProducts = products.filter((product) =>
@@ -55,18 +67,30 @@ const Dashboard = ({ user }) => {
 
   return (
     <div className="p-6 bg-gray-100 min-h-screen space-y-8">
-      <h2 className="text-2xl font-semibold">Welcome, {user?.username}</h2>
+      <div className="flex justify-between items-center">
+         
+        <div className="flex justify-center">
+            <img src={logo} alt="logo" className="w-24" />
+        </div>
+
+        <button onClick={logoutUser} className="bg-red-500 rounded hover:bg-red-600">Logout</button>
+      </div>
 
       {/* Quick Actions */}
       <div className="flex justify-between items-center">
-        <h4 className="text-2xl font-semibold">Quick overview of your inventory</h4>
+        <div>
+            <h2 className="text-2xl font-semibold">Welcome, {user?.username}</h2>
+            <h4 className="text-2xl font-semibold">Quick overview of your inventory</h4>
+        </div>
+
         <div className="flex flex-wrap gap-2">
     
-            <button className="px-4 py-2 rounded" data-bs-toggle="modal" data-bs-target="#addProductModal">Add Product</button>
+            <button className="px-2 rounded" data-bs-toggle="modal" data-bs-target="#addProductModal">Add Product</button>
             <button className="text-success flex items-center gap-2"
             onClick={() => {
                 fetchSummary()
                 fetchProducts()
+                fetchCategories()
             }}
             >
             <i className="bi bi-arrow-clockwise"></i>
@@ -76,7 +100,7 @@ const Dashboard = ({ user }) => {
         </div>
 
       <div className="row">
-        <div className="col-md-5">
+        <div className="col-md-5 mb-3">
           <div className="flex flex-col gap-4">
             <div className="flex gap-4">
               <SummaryCard label="Inventory" value={summary?.total_inventory} />
@@ -91,7 +115,7 @@ const Dashboard = ({ user }) => {
 
         <div className="col-md-7">
             {/* Product Table Section */}
-            <div className="bg-white p-4 rounded shadow">
+            <div className="bg-white p-4 rounded shadow h-100">
                 <div className="flex flex-col sm:flex-row justify-between items-center mb-4 gap-2">
                 <h3 className="text-lg font-semibold">Product List</h3>
                 <input
@@ -108,7 +132,7 @@ const Dashboard = ({ user }) => {
                     <thead>
                     <tr className="bg-gray-200 text-left">
                         <th className="p-2 border">Name</th>
-                        <th className="p-2 border">Price</th>
+                        <th className="p-2 border">Price (Ghc)</th>
                         <th className="p-2 border">Stock</th>
                         <th className="p-2 border">Category</th>
                     </tr>
@@ -117,9 +141,9 @@ const Dashboard = ({ user }) => {
                     {filteredProducts.map((prod) => (
                         <tr key={prod.id} className="border-t hover:bg-gray-50">
                         <td className="p-2 border">{prod.name}</td>
-                        <td className="p-2 border">₦{prod.price}</td>
+                        <td className="p-2 border">{prod.unit_price}</td>
                         <td className="p-2 border">{prod.stock}</td>
-                        <td className="p-2 border">{prod.category?.name}</td>
+                        <td className="p-2 border">{categories.find(cat => cat.id === prod.category_id)?.name}</td>
                         </tr>
                     ))}
                     {filteredProducts.length === 0 && (
@@ -147,41 +171,46 @@ const Dashboard = ({ user }) => {
             <div className="modal-body">
               <input
                 type="text"
-                className="form-control mb-2"
+                className="form-control mb-3"
                 placeholder="Name"
                 value={formData.name}
                 onChange={e => setFormData({ ...formData, name: e.target.value })}
               />
-              <input
-                type="number"
-                className="form-control mb-2"
-                placeholder="Category ID"
+              <select
+                className="form-control mb-3"
                 value={formData.category_id}
                 onChange={e => setFormData({ ...formData, category_id: e.target.value })}
-              />
+              >
+                <option value="">Select Category</option>
+                {categories.map(category => (
+                  <option key={category.id} value={category.id}>
+                    {category.name}
+                  </option>
+                ))}
+              </select>
               <input
                 type="number"
-                className="form-control mb-2"
+                className="form-control mb-3"
                 placeholder="Price"
                 value={formData.price}
                 onChange={e => setFormData({ ...formData, price: e.target.value })}
               />
-              <textarea
-                className="form-control mb-2"
-                placeholder="Description"
-                value={formData.description}
-                onChange={e => setFormData({ ...formData, description: e.target.value })}
-              />
               <input
                 type="number"
-                className="form-control"
+                className="form-control mb-3"
                 placeholder="Minimum Stock"
                 value={formData.min_stock}
                 onChange={e => setFormData({ ...formData, min_stock: e.target.value })}
               />
+              <textarea
+                className="form-control mb-3"
+                placeholder="Description"
+                value={formData.description}
+                onChange={e => setFormData({ ...formData, description: e.target.value })}
+              />
             </div>
             <div className="modal-footer">
-              <button onClick={handleCreateProduct} className="btn btn-success">Create</button>
+              <button onClick={handleCreateProduct} className="btn btn-md btn-success">Create</button>
               <button className="btn btn-secondary" data-bs-dismiss="modal">Close</button>
             </div>
           </div>
