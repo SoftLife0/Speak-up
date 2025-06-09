@@ -41,7 +41,18 @@ const Dashboard = ({ user }) => {
     }
   }
 
-  const handleCreateProduct = async () => {
+  const handleCreateProduct = async (e) => {
+    e.preventDefault()
+    setLoading(true)
+    setError(null)
+
+    // name price category and minstock should be required
+    if (!formData.name || !formData.price || !formData.category_id || !formData.min_stock) {
+      setError('All fields are required')
+      setLoading(false)
+      return
+    }
+    
     try {
       await apiService.post('/create_product', formData)
       fetchProducts()
@@ -62,8 +73,8 @@ const Dashboard = ({ user }) => {
     product.name.toLowerCase().includes(search.toLowerCase())
   )
 
-  if (loading) return <p className="p-4">Loading...</p>
-  if (error) return <p className="p-4 text-red-500">Error: {error}</p>
+//   if (loading) return <p className="p-4">Loading...</p>
+//   if (error) return <p className="p-4 text-red-500">Error: {error}</p>
 
   return (
     <div className="p-6 bg-gray-100 min-h-screen space-y-8">
@@ -115,16 +126,10 @@ const Dashboard = ({ user }) => {
 
         <div className="col-md-7">
             {/* Product Table Section */}
-            <div className="bg-white p-4 rounded shadow h-100">
+            <div className="bg-white p-4 rounded shadow h-100 overflow-y-scroll">
                 <div className="flex flex-col sm:flex-row justify-between items-center mb-4 gap-2">
-                <h3 className="text-lg font-semibold">Product List</h3>
-                <input
-                    type="text"
-                    placeholder="Search products..."
-                    className="border rounded px-3 py-2 w-full sm:w-64"
-                    value={search}
-                    onChange={(e) => setSearch(e.target.value)}
-                />
+                    <h3 className="text-lg font-semibold">Product List</h3>
+                    <input type="text" placeholder="Search products..." className="border rounded px-3 py-2 w-full sm:w-64" value={search} onChange={(e) => setSearch(e.target.value)}/>
                 </div>
 
                 <div className="overflow-x-auto">
@@ -175,11 +180,13 @@ const Dashboard = ({ user }) => {
                 placeholder="Name"
                 value={formData.name}
                 onChange={e => setFormData({ ...formData, name: e.target.value })}
+                required
               />
               <select
                 className="form-control mb-3"
                 value={formData.category_id}
                 onChange={e => setFormData({ ...formData, category_id: e.target.value })}
+                required
               >
                 <option value="">Select Category</option>
                 {categories.map(category => (
@@ -194,6 +201,7 @@ const Dashboard = ({ user }) => {
                 placeholder="Price"
                 value={formData.price}
                 onChange={e => setFormData({ ...formData, price: e.target.value })}
+                required
               />
               <input
                 type="number"
@@ -201,6 +209,7 @@ const Dashboard = ({ user }) => {
                 placeholder="Minimum Stock"
                 value={formData.min_stock}
                 onChange={e => setFormData({ ...formData, min_stock: e.target.value })}
+                required
               />
               <textarea
                 className="form-control mb-3"
@@ -209,6 +218,8 @@ const Dashboard = ({ user }) => {
                 onChange={e => setFormData({ ...formData, description: e.target.value })}
               />
             </div>
+
+            {error && <p className="text-red-500 text-center">{error}</p>}
             <div className="modal-footer">
               <button onClick={handleCreateProduct} className="btn btn-md btn-success">Create</button>
               <button className="btn btn-secondary" data-bs-dismiss="modal">Close</button>
