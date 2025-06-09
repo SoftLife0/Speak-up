@@ -1,3 +1,4 @@
+from decimal import Decimal
 from flask import Blueprint
 from flask import Flask, render_template, request, redirect, send_file, url_for, flash, session, jsonify
 from .models import Category, Product, Inventory, Prescription, PrescriptionItem, User
@@ -11,11 +12,7 @@ inventory = Blueprint('inventory',__name__)
 
 
 @inventory.route('/dashboard', methods=['GET'])
-# @jwt_required()
 def dashboard_summary():
-    # user_email = get_jwt_identity()
-    # user = User.query.filter_by(email=user_email).first()
-
     total_products = Product.query.count()
     total_categories = Category.query.count()
     total_inventory = Inventory.query.count()
@@ -125,7 +122,7 @@ def delete_category(category_id):
     
     
 # Create Product
-@inventory.route('/product', methods=['POST'])
+@inventory.route('/create_product', methods=['POST'])
 def create_product():
     if request.method == 'POST':
         data = request.get_json()
@@ -142,11 +139,11 @@ def create_product():
         if existing_product:
             return ApiResponse.error("Product already exists"), 400
 
-        product = Product(name=name, category_id=int(category_id), unit_price=float(price), description=description, min_stock=int(min_stock))
+        product = Product(name=name, category_id=int(category_id), unit_price=Decimal(price), description=description, min_stock=int(min_stock))
         db.session.add(product)
         db.session.commit()
 
-        data = {
+        product_data = {
             "id": product.id,
             "name": product.name,
             "category_id": product.category_id,
@@ -154,11 +151,13 @@ def create_product():
             "description": product.description,
             "created_at": product.created_at.strftime("%Y-%m-%d %H:%M:%S")
         }
-        print("Product Created", data)
-        return ApiResponse.success(data, message="Product created successfully"), 201
+        
+        response_data = {"products": product_data}
+        print("Product Created", response_data)
+        return ApiResponse.success(response_data, message="Product created successfully"), 201
     
 # Get all Product
-@inventory.route('/product', methods=['GET'])
+@inventory.route('/allproducts', methods=['GET'])
 def get_all_products():
     if request.method == 'GET':
         all_products = Product.query.all()
@@ -173,6 +172,7 @@ def get_all_products():
                 "min_stock": product.min_stock,
                 "created_at": product.created_at.strftime("%Y-%m-%d %H:%M:%S")
             })
+            
         print("All Products", data)
         return ApiResponse.success(data, message="Products retrieved successfully"), 200
     
@@ -197,7 +197,7 @@ def edit_product(product_id):
 
         product.name = name
         product.category_id = int(category_id)
-        product.unit_price = float(price)
+        product.unit_price = Decimal(price)
         product.description = description
         product.min_stock = int(min_stock)
         db.session.commit()
