@@ -6,6 +6,7 @@ import AuthGuard from "./pages/AuthGuard.jsx";
 import Home from "./pages/website/Home";
 import Transactions from "./pages/Transaction.jsx";
 import LowStock from "./pages/LowStock.jsx";
+import Product from "./pages/Product.jsx";
 
 export const router = createBrowserRouter([
   { path: "/", element: <Home/>},
@@ -14,4 +15,5 @@ export const router = createBrowserRouter([
   { path: "/dashboard", element: <AuthGuard>{(user) => <Dashboard user={user} />}</AuthGuard>},
   { path: "/transactions", element: <AuthGuard>{(user) => <Transactions user={user} />}</AuthGuard>},
   { path: "/low-stock", element: <AuthGuard>{(user) => <LowStock user={user} />}</AuthGuard>},
+  { path: "/products", element: <AuthGuard>{(user) => <Product user={user} />}</AuthGuard>},
 ]);

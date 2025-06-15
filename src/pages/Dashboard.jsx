@@ -177,7 +177,7 @@ const handleSubmitPOS = async () => {
           <div className="flex flex-col gap-4">
             <div className="flex gap-4">
               <SummaryCard label="Inventory" value={summary?.total_inventory} />
-              <SummaryCard label="Products" value={summary?.total_products} />
+              <SummaryCard label="Products" value={summary?.total_products} link="/products"/>
             </div>
             <div className="flex gap-4">
               <SummaryCard label="Transactions" value={summary?.total_prescriptions} color="text-blue-600" link="/transactions"/>

@@ -326,7 +326,16 @@ def get_transactions():
             "id": tx.id,
             "customer_name": tx.customer_name,
             "total_amount": tx.total_amount,
-            "created_at": tx.created_at.isoformat()
+            "created_at": tx.created_at.isoformat(),
+            "items": [
+                {
+                    "product_id": item.product_id,
+                    "product_name": item.product.name,
+                    "quantity": item.quantity,
+                    "subtotal": item.subtotal
+                }
+                for item in tx.items
+            ]
         }
         for tx in transactions
     ]

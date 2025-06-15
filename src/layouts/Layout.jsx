@@ -1,29 +1,22 @@
-import React, { useState } from 'react';
-import Sidebar from '../components/Sidebar';
-import Header from '../components/Header';
+import logo from "../assets/images/speaklogo.png"
+import { useUser } from "../context/userContext"
 
 const Layout = ({ children }) => {
-  const [showSidebar, setShowSidebar] = useState(false);
-
-  const toggleSidebar = () => setShowSidebar(prev => !prev);
-
+  const { logoutUser } = useUser()
+  
   return (
-    <div className="d-flex flex-column vh-100">
-      <Header toggleSidebar={toggleSidebar} />
-      <div className="d-flex flex-grow-1" style={{ marginTop: '-60px' }}>
-        <Sidebar show={showSidebar} />
-        <main
-          className="ms-md-5 ms-0 flex-grow-1 p-3 overflow-auto"
-          style={{
-            marginLeft: '220px',
-            height: 'calc(100vh - 60px)',
-            marginTop: '60px',
-            transition: 'margin-left 0.3s ease',
-          }}
-        >
-          {children}
-        </main>
+    <div className="p-6 bg-gray-100 min-h-screen space-y-8">
+      <div className="flex justify-between items-center">
+          
+        <div className="flex justify-center">
+            <img src={logo} alt="logo" className="w-24" />
+        </div>
+
+        <button onClick={logoutUser} className="bg-red-500 rounded hover:bg-red-600">Logout</button>
       </div>
+          
+      {children}
+        
     </div>
   );
 };
