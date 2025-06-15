@@ -12,6 +12,7 @@ auth = Blueprint('auth', __name__)
 @auth.route('/register', methods=['POST'])
 def register():
     data = request.get_json()
+    print("Register data ", data)
     username = data.get("username")
     email = data.get("email")
     password = data.get("password")
@@ -31,6 +32,7 @@ def register():
     db.session.add(new_user)
     db.session.commit()
 
+    print("New User", response_data)
     return ApiResponse.success(data=response_data, message="User registered successfully"), 201
 
 

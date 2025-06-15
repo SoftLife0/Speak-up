@@ -1,13 +1,11 @@
 import { useState, useEffect } from 'react'
-import { useUser } from '../context/userContext'
 import { apiService } from '../services/apiService'
-import logo from "../assets/images/speaklogo.png"
 import SummaryCard from '../components/SummaryCard'
 import { toast } from 'react-toastify';
+import Layout from '../layouts/Layout';
 
 
 const Dashboard = ({ user }) => {
-  const { logoutUser } = useUser()
   const [summary, setSummary] = useState(null)
   const [products, setProducts] = useState([])
   const [categories, setCategories] = useState([])
@@ -139,17 +137,7 @@ const handleSubmitPOS = async () => {
 //   if (error) return <p className="p-4 text-red-500">Error: {error}</p>
 
   return (
-    <div className="p-6 bg-gray-100 min-h-screen space-y-8">
-      <div className="flex justify-between items-center">
-         
-        <div className="flex justify-center">
-            <img src={logo} alt="logo" className="w-24" />
-        </div>
-
-        <button onClick={logoutUser} className="bg-red-500 rounded hover:bg-red-600">Logout</button>
-      </div>
-
-      {/* Quick Actions */}
+    <Layout>
       <div className="flex justify-between items-center">
         <div>
             <h2 className="text-2xl font-semibold">Welcome, {user?.username}</h2>
@@ -170,7 +158,7 @@ const handleSubmitPOS = async () => {
             Refresh
             </button>
         </div>
-        </div>
+      </div>
 
       <div className="row">
         <div className="col-md-5 col-12 mb-3">
@@ -179,6 +167,7 @@ const handleSubmitPOS = async () => {
               <SummaryCard label="Inventory" value={summary?.total_inventory} />
               <SummaryCard label="Products" value={summary?.total_products} link="/products"/>
             </div>
+            
             <div className="flex gap-4">
               <SummaryCard label="Transactions" value={summary?.total_prescriptions} color="text-blue-600" link="/transactions"/>
               <SummaryCard label="Low Stock" value={summary?.low_stock} color="text-red-600" link="/low-stock"/>
@@ -188,7 +177,7 @@ const handleSubmitPOS = async () => {
 
         <div className="col-md-7">
           {/* Product Table Section */}
-          <div className="bg-white p-4 rounded shadow h-100 overflow-y-scroll">
+          <div className="bg-white p-4 rounded shadow h-90 overflow-y-scroll">
               <div className="flex flex-col sm:flex-row justify-between items-center mb-4 gap-2">
                   <h3 className="text-lg font-semibold">Product List</h3>
                   <input type="text" placeholder="Search products..." className="border rounded px-3 py-2 w-full sm:w-64" value={search} onChange={(e) => setSearch(e.target.value)}/>
@@ -230,19 +219,13 @@ const handleSubmitPOS = async () => {
 
       <div className="row">
         <div className="col-12 d-flex justify-around">
-          {/* POS Button */}
-            <button
-              className="px-6 py-3 rounded-full shadow-lg hover:bg-blue-700"
-              data-bs-toggle="modal"
-              data-bs-target="#posModal"
-            >
+            <button className="px-6 py-3 rounded-full shadow-lg hover:bg-blue-700" data-bs-toggle="modal" data-bs-target="#posModal">
               🛒 Take Sale
             </button>
 
           <button className="px-2 rounded btn btn-primary" data-bs-toggle="modal" data-bs-target="#stockIntakeModal">
             Stock Intake
           </button>
-
         </div>
       </div>
 
@@ -311,166 +294,164 @@ const handleSubmitPOS = async () => {
 
 
       {/* Stock Intake Modal */}
-<div className="modal fade" id="stockIntakeModal" tabIndex="-1">
-  <div className="modal-dialog">
-    <div className="modal-content">
-      <div className="modal-header">
-        <h5 className="modal-title">Stock Intake</h5>
-        <button type="button" className="btn-close" data-bs-dismiss="modal" />
-      </div>
-      <div className="modal-body">
-        <select
-          className="form-control mb-3"
-          value={formData.product_id || ''}
-          onChange={(e) => setFormData({ ...formData, product_id: e.target.value })}
-        >
-          <option value="">Select Product</option>
-          {products.map((product) => (
-            <option key={product.id} value={product.id}>
-              {product.name}
-            </option>
-          ))}
-        </select>
-        <input
-          type="number"
-          className="form-control mb-3"
-          placeholder="Quantity"
-          value={formData.quantity || ''}
-          onChange={(e) => setFormData({ ...formData, quantity: e.target.value })}
-        />
-        {error && <p className="text-danger text-center">{error}</p>}
-      </div>
-      <div className="modal-footer">
-        <button className="btn btn-success" onClick={handleStockIntake}>Add Stock</button>
-        <button className="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-      </div>
-    </div>
-  </div>
-</div>
-
-
-      {/* POS Modal */}
-      {/* POS Modal */}
-<div className="modal fade" id="posModal" tabIndex="-1">
-  <div className="modal-dialog modal-md">
-    <div className="modal-content">
-      <div className="modal-header">
-        <h5 className="modal-title">Point of Sale</h5>
-        <button type="button" className="btn-close" data-bs-dismiss="modal"></button>
-      </div>
-      <div className="modal-body space-y-3">
-        <input
-          type="text"
-          className="form-control"
-          placeholder="Customer Name"
-          value={customerName}
-          onChange={(e) => setCustomerName(e.target.value)}
-        />
-
-        <input
-          type="text"
-          className="form-control"
-          placeholder="Search product"
-          value={posSearch}
-          onChange={(e) => {
-            setPosSearch(e.target.value)
-            setSelectedProduct(null)
-          }}
-        />
-
-        {/* Matching Product Dropdown */}
-        {posSearch && (
-          <div className="border rounded p-2 bg-light">
-            {products
-              .filter(p => p.name.toLowerCase().includes(posSearch.toLowerCase()))
-              .map(p => (
-                <div key={p.id} className="d-flex justify-content-between align-items-center py-1">
-                  <span>{p.name} - GHC {p.unit_price}</span>
-                  <button className="btn btn-sm btn-primary" onClick={() => {
-                    setSelectedProduct(p)
-                    setPosSearch('')
-                  }}>Select</button>
-                </div>
-              ))}
-          </div>
-        )}
-
-        {/* Selected product section */}
-        {selectedProduct && (
-          <div className="d-flex align-items-center gap-3 mt-2">
-            <strong>{selectedProduct.name}</strong>
-            <input
-              type="number"
-              value={quantity}
-              min="1"
-              className="form-control"
-              style={{ width: "80px" }}
-              onChange={(e) => setQuantity(Number(e.target.value))}
-            />
-            <button className="btn btn-success" onClick={() => {
-              const existing = cartItems.find(item => item.id === selectedProduct.id)
-              if (!existing) {
-                setCartItems([...cartItems, { ...selectedProduct, quantity }])
-              }
-              setSelectedProduct(null)
-              setQuantity(1)
-            }}>
-              Add to Cart
-            </button>
-          </div>
-        )}
-
-        {/* Cart Table or Empty Message */}
-        {cartItems.length === 0 ? (
-          <div className="text-center text-muted mt-3">🛒 No item added to cart</div>
-        ) : (
-          <div className="table-responsive mt-3">
-            <table className="table table-bordered">
-              <thead>
-                <tr>
-                  <th>Product</th>
-                  <th>Price</th>
-                  <th>Qty</th>
-                  <th>Subtotal</th>
-                  <th>Remove</th>
-                </tr>
-              </thead>
-              <tbody>
-                {cartItems.map(item => (
-                  <tr key={item.id}>
-                    <td>{item.name}</td>
-                    <td>{item.unit_price}</td>
-                    <td>{item.quantity}</td>
-                    <td>{(item.unit_price * item.quantity).toFixed(2)}</td>
-                    <td>
-                      <button className="btn btn-sm btn-danger" onClick={() => {
-                        setCartItems(cartItems.filter(i => i.id !== item.id))
-                      }}>
-                        Remove
-                      </button>
-                    </td>
-                  </tr>
+      <div className="modal fade" id="stockIntakeModal" tabIndex="-1">
+        <div className="modal-dialog">
+          <div className="modal-content">
+            <div className="modal-header">
+              <h5 className="modal-title">Stock Intake</h5>
+              <button type="button" className="btn-close" data-bs-dismiss="modal" />
+            </div>
+            <div className="modal-body">
+              <select
+                className="form-control mb-3"
+                value={formData.product_id || ''}
+                onChange={(e) => setFormData({ ...formData, product_id: e.target.value })}
+              >
+                <option value="">Select Product</option>
+                {products.map((product) => (
+                  <option key={product.id} value={product.id}>
+                    {product.name}
+                  </option>
                 ))}
-              </tbody>
-            </table>
-            <div className="text-end fw-bold">
-              Total: GHC {cartItems.reduce((total, item) => total + item.unit_price * item.quantity, 0).toFixed(2)}
+              </select>
+              <input
+                type="number"
+                className="form-control mb-3"
+                placeholder="Quantity"
+                value={formData.quantity || ''}
+                onChange={(e) => setFormData({ ...formData, quantity: e.target.value })}
+              />
+              {error && <p className="text-danger text-center">{error}</p>}
+            </div>
+            <div className="modal-footer">
+              <button className="btn btn-success" onClick={handleStockIntake}>Add Stock</button>
+              <button className="btn btn-secondary" data-bs-dismiss="modal">Close</button>
             </div>
           </div>
-        )}
+        </div>
       </div>
 
-      <div className="modal-footer">
-        <button className="btn btn-success" onClick={handleSubmitPOS}>Submit Sale</button>
-        <button className="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+
+      {/* POS Modal */}
+      {/* POS Modal */}
+      <div className="modal fade" id="posModal" tabIndex="-1">
+        <div className="modal-dialog modal-md">
+          <div className="modal-content">
+            <div className="modal-header">
+              <h5 className="modal-title">Point of Sale</h5>
+              <button type="button" className="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div className="modal-body space-y-3">
+              <input
+                type="text"
+                className="form-control"
+                placeholder="Customer Name"
+                value={customerName}
+                onChange={(e) => setCustomerName(e.target.value)}
+              />
+
+              <input
+                type="text"
+                className="form-control"
+                placeholder="Search product"
+                value={posSearch}
+                onChange={(e) => {
+                  setPosSearch(e.target.value)
+                  setSelectedProduct(null)
+                }}
+              />
+
+              {/* Matching Product Dropdown */}
+              {posSearch && (
+                <div className="border rounded p-2 bg-light">
+                  {products
+                    .filter(p => p.name.toLowerCase().includes(posSearch.toLowerCase()))
+                    .map(p => (
+                      <div key={p.id} className="d-flex justify-content-between align-items-center py-1">
+                        <span>{p.name} - GHC {p.unit_price}</span>
+                        <button className="btn btn-sm btn-primary" onClick={() => {
+                          setSelectedProduct(p)
+                          setPosSearch('')
+                        }}>Select</button>
+                      </div>
+                    ))}
+                </div>
+              )}
+
+              {/* Selected product section */}
+              {selectedProduct && (
+                <div className="d-flex align-items-center gap-3 mt-2">
+                  <strong>{selectedProduct.name}</strong>
+                  <input
+                    type="number"
+                    value={quantity}
+                    min="1"
+                    className="form-control"
+                    style={{ width: "80px" }}
+                    onChange={(e) => setQuantity(Number(e.target.value))}
+                  />
+                  <button className="btn btn-success" onClick={() => {
+                    const existing = cartItems.find(item => item.id === selectedProduct.id)
+                    if (!existing) {
+                      setCartItems([...cartItems, { ...selectedProduct, quantity }])
+                    }
+                    setSelectedProduct(null)
+                    setQuantity(1)
+                  }}>
+                    Add to Cart
+                  </button>
+                </div>
+              )}
+
+              {/* Cart Table or Empty Message */}
+              {cartItems.length === 0 ? (
+                <div className="text-center text-muted mt-3">🛒 No item added to cart</div>
+              ) : (
+                <div className="table-responsive mt-3">
+                  <table className="table table-bordered">
+                    <thead>
+                      <tr>
+                        <th>Product</th>
+                        <th>Price</th>
+                        <th>Qty</th>
+                        <th>Subtotal</th>
+                        <th>Remove</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {cartItems.map(item => (
+                        <tr key={item.id}>
+                          <td>{item.name}</td>
+                          <td>{item.unit_price}</td>
+                          <td>{item.quantity}</td>
+                          <td>{(item.unit_price * item.quantity).toFixed(2)}</td>
+                          <td>
+                            <button className="btn btn-sm btn-danger" onClick={() => {
+                              setCartItems(cartItems.filter(i => i.id !== item.id))
+                            }}>
+                              Remove
+                            </button>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                  <div className="text-end fw-bold">
+                    Total: GHC {cartItems.reduce((total, item) => total + item.unit_price * item.quantity, 0).toFixed(2)}
+                  </div>
+                </div>
+              )}
+            </div>
+
+            <div className="modal-footer">
+              <button className="btn btn-success" onClick={handleSubmitPOS}>Submit Sale</button>
+              <button className="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+          </div>
+        </div>
       </div>
-    </div>
-  </div>
-</div>
 
-
-
-    </div>
+    </Layout>
   )
 }
 

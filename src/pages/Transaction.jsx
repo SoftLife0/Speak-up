@@ -12,7 +12,7 @@ const Transactions = ({user}) => {
     try {
         const response = await apiService.get("/transactions")
         console.log(response)
-        setData(response?.data || []) // ✅ correct way
+        setData(response?.data || [])
     } catch (error) {
         console.error("Error fetching transactions:", error)
     }
@@ -26,7 +26,6 @@ const Transactions = ({user}) => {
     <Layout>
         <div className='row d-flex justify-center'>
             <div className="col-md-9">
-                {/* Product Table Section */}
                 <div className="bg-white p-4 rounded shadow h-100 overflow-y-scroll">
                     <div className="flex flex-col sm:flex-row justify-between items-center mb-4 gap-2">
                         <h3 className="text-lg font-semibold">Transaction History</h3>

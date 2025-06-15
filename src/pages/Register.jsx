@@ -2,11 +2,12 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import logo from '../assets/images/speaklogo.png';
 import { apiService } from '../services/apiService';
+import { toast } from 'react-toastify';
 
 const Register = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const [full_name, setFull_name] = useState('');
+    const [username, setUsername] = useState('');
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
     
@@ -17,19 +18,16 @@ const Register = () => {
         setError('');
         setLoading(true);
 
-        const signupData = { email, password, full_name, role: "patient" };
+        const signupData = { email, password, username, role: "patient" };
         console.log("Data", signupData)
 
         try {
             const result = await apiService.post('/register', signupData);
-            if (result.success) {
-                alert("Registered successfully!");
-                navigate('/dashboard');
-            } else {
-                setError(result.error);
-            }
+            toast.success(result?.message)
+            navigate('/login');
         } catch (error) {
-            setError("An unexpected error occurred.");
+            const errorMessage = error?.response?.data?.message || 'Error during registration.';
+            toast.error(errorMessage)
         } finally {
             setLoading(false);
         }
@@ -50,7 +48,7 @@ const Register = () => {
                     <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} className='border rounded-md p-2' placeholder='example@gmail.com' required />
 
                     <label>Full Name</label>
-                    <input type="text" value={full_name} onChange={(e) => setFull_name(e.target.value)} className='border rounded-md p-2' placeholder='John Doe' required />
+                    <input type="text" value={username} onChange={(e) => setUsername(e.target.value)} className='border rounded-md p-2' placeholder='John Doe' required />
                     <label>Password</label>
                     <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} 
                         className='border rounded-md p-2' placeholder='********' required />
