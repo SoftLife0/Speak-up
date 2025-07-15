@@ -11,6 +11,7 @@ class User(db.Model):
     username = db.Column(db.String(80), unique=True, nullable=False)
     email = db.Column(db.String(120), unique=True, nullable=False)
     password = db.Column(db.String(200), nullable=False)
+    role = db.Column(db.String(50))
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     
     
@@ -59,3 +60,16 @@ class PrescriptionItem(db.Model):
     subtotal = db.Column(db.Float, nullable=False)  # calculated as quantity * unit_price in logic
 
     product = db.relationship('Product')
+    
+    
+class Complaint(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    title = db.Column(db.String(150), nullable=False)
+    message = db.Column(db.Text, nullable=False)
+    response = db.Column(db.Text)
+    status = db.Column(db.String(50), default='pending')
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    updated_at = db.Column(db.DateTime, onupdate=datetime.utcnow)
+
+    user = db.relationship('User', backref='complaints')

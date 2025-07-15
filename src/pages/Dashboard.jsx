@@ -13,10 +13,10 @@ const Dashboard = ({ user }) => {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
   const [customerName, setCustomerName] = useState('')
-const [cartItems, setCartItems] = useState([])
-const [posSearch, setPosSearch] = useState('')
-const [selectedProduct, setSelectedProduct] = useState(null)
-const [quantity, setQuantity] = useState(1)
+  const [cartItems, setCartItems] = useState([])
+  const [posSearch, setPosSearch] = useState('')
+  const [selectedProduct, setSelectedProduct] = useState(null)
+  const [quantity, setQuantity] = useState(1)
 
 
 const handleSubmitPOS = async () => {
@@ -133,6 +133,7 @@ const handleSubmitPOS = async () => {
     product.name.toLowerCase().includes(search.toLowerCase())
   )
 
+
 //   if (loading) return <p className="p-4">Loading...</p>
 //   if (error) return <p className="p-4 text-red-500">Error: {error}</p>
 
@@ -145,39 +146,57 @@ const handleSubmitPOS = async () => {
         </div>
 
         <div className="flex flex-wrap gap-2">
-    
-            <button className="px-2 rounded" data-bs-toggle="modal" data-bs-target="#addProductModal">Add Product</button>
-            <button className="text-success flex items-center gap-2"
-            onClick={() => {
-                fetchSummary()
-                fetchProducts()
-                fetchCategories()
-            }}
-            >
-            <i className="bi bi-arrow-clockwise"></i>
-            Refresh
-            </button>
+            <div className="row">
+              <div className="col-12 d-flex gap-3 justify-content-end">
+                <button className="px-6 py-3 rounded btn btn-success" data-bs-toggle="modal" data-bs-target="#posModal">
+                  Take Sale
+                </button>
+
+                <button className="px-2 rounded btn btn-primary" data-bs-toggle="modal" data-bs-target="#stockIntakeModal">
+                  Stock Intake
+                </button>
+                <button className="px-2 rounded btn btn-dark" data-bs-toggle="modal" data-bs-target="#addProductModal">
+                  Add Product
+                </button>
+                <button className="px-6 py-3 rounded shadow-lg"
+                  onClick={() => {
+                      fetchSummary()
+                      fetchProducts()
+                      fetchCategories()
+                  }}>
+                  <i className="bi bi-arrow-clockwise me-2"></i>
+                  Refresh
+                </button>
+              </div>
+            </div>
         </div>
       </div>
 
       <div className="row">
-        <div className="col-md-5 col-12 mb-3">
+        <div className="col-md-6 col-lg-5 col-12 mb-3">
           <div className="flex flex-col gap-4">
             <div className="flex gap-4">
               <SummaryCard label="Inventory" value={summary?.total_inventory} />
               <SummaryCard label="Products" value={summary?.total_products} link="/products"/>
+              <SummaryCard label="Complaints" value={summary?.total_complaints} link="/doctor-complaints"/>
             </div>
-            
+
             <div className="flex gap-4">
+              <SummaryCard label="Low Stock" value={summary?.low_stock} color="text-red-600" link="/low-stock"/>
               <SummaryCard label="Transactions" value={summary?.total_prescriptions} color="text-blue-600" link="/transactions"/>
               <SummaryCard label="Low Stock" value={summary?.low_stock} color="text-red-600" link="/low-stock"/>
             </div>
+            
+            {/* <div className="flex gap-4">
+              <SummaryCard label="Transactions" value={summary?.total_prescriptions} color="text-blue-600" link="/transactions"/>
+              <SummaryCard label="Low Stock" value={summary?.low_stock} color="text-red-600" link="/low-stock"/>
+            </div> */}
           </div>
         </div>
 
-        <div className="col-md-7">
+        <div className="col-md-6 col-lg-7">
           {/* Product Table Section */}
-          <div className="bg-white p-4 rounded shadow h-90 overflow-y-scroll">
+          <div className="bg-white p-4 rounded shadow h-120 overflow-y-scroll">
               <div className="flex flex-col sm:flex-row justify-between items-center mb-4 gap-2">
                   <h3 className="text-lg font-semibold">Product List</h3>
                   <input type="text" placeholder="Search products..." className="border rounded px-3 py-2 w-full sm:w-64" value={search} onChange={(e) => setSearch(e.target.value)}/>
@@ -213,19 +232,6 @@ const handleSubmitPOS = async () => {
               </table>
               </div>
           </div>
-        </div>
-      </div>
-
-
-      <div className="row">
-        <div className="col-12 d-flex justify-around">
-            <button className="px-6 py-3 rounded-full shadow-lg hover:bg-blue-700" data-bs-toggle="modal" data-bs-target="#posModal">
-              🛒 Take Sale
-            </button>
-
-          <button className="px-2 rounded btn btn-primary" data-bs-toggle="modal" data-bs-target="#stockIntakeModal">
-            Stock Intake
-          </button>
         </div>
       </div>
 

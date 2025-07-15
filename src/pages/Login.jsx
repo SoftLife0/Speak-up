@@ -27,10 +27,15 @@ const Login = () => {
             const { user } = response?.data
             loginUser(user);
             toast.success(response?.message, { position: "top-right", hideProgressBar: true });
-            navigate('/dashboard');
+            console.log(user?.role)
+            if (user.role === 'doctor') {
+                navigate('/dashboard');
+            } else {
+                navigate('/complaints');
+            }
         } catch (error) {
             console.log("Login error:", error);
-            const errorMessage = error?.response?.data?.error || "An error occurred during login.";
+            const errorMessage = error?.response?.data?.message || "An error occurred during login.";
             toast.error(errorMessage);
             setError(errorMessage);
         } finally {

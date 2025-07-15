@@ -2,7 +2,7 @@ from datetime import datetime
 from decimal import Decimal
 from flask import Blueprint
 from flask import Flask, render_template, request, redirect, send_file, url_for, flash, session, jsonify
-from .models import Category, Product, Inventory, Prescription, PrescriptionItem, User
+from .models import Category, Product, Inventory, Prescription, PrescriptionItem, User, Complaint
 from apiresponse import ApiResponse
 from blueprints import db
 from flask_jwt_extended import jwt_required, get_jwt_identity
@@ -18,6 +18,7 @@ def dashboard_summary():
     total_categories = Category.query.count()
     total_inventory = Inventory.query.count()
     total_prescriptions = Prescription.query.count()
+    total_complaints = Complaint.query.count()
     
     low_stock = db.session.query(Product).join(Inventory).filter(
         Inventory.quantity <= Product.min_stock
@@ -28,7 +29,8 @@ def dashboard_summary():
         "total_categories": total_categories,
         "total_inventory": total_inventory,
         "total_prescriptions": total_prescriptions,
-        "low_stock": low_stock
+        "low_stock": low_stock,
+        "total_complaints": total_complaints
     }
 
     return ApiResponse.success(data, message="Dashboard summary retrieved successfully"), 200
@@ -365,3 +367,87 @@ def get_low_stock():
     ]
 
     return ApiResponse.success(result, message="Low stock items retrieved successfully"), 200
+
+
+# File a complaint
+@inventory.route('/complaints', methods=['POST'])
+@jwt_required()
+def file_complaint():
+    user_id = get_jwt_identity()
+    data = request.get_json()
+    title = data.get('title')
+    message = data.get('message')
+
+    if not title or not message:
+        return ApiResponse.error("Title and message are required"), 400
+
+    complaint = Complaint(user_id=user_id, title=title, message=message)
+    print("Complaint Filed", complaint)
+    db.session.add(complaint)
+    db.session.commit()
+
+    return ApiResponse.success({}, message="Complaint submitted successfully"), 201
+
+# Get all complaints (doctor) or own (patient)
+@inventory.route('/complaints', methods=['GET'])
+@jwt_required()
+def get_complaints():
+    user_email = get_jwt_identity()
+    user = User.query.filter_by(email=user_email).first()
+    
+    if not user:
+        print("User not found for ID:", user_email)
+        return ApiResponse.error("User not found", 404)
+    
+    print("User Body", user)
+
+    print("User:", user.username, "| Role:", user.role)
+
+
+    if user and user.role == 'doctor':
+        complaints = Complaint.query.all()
+        print("All Complaints Retrieved", complaints)
+    else:
+        # complaints = Complaint.query.filter_by(user_email=user_email).all()
+        complaints = Complaint.query.filter_by(user_id=user.id).all()
+        print("Patient Complaints Retrieved", complaints)
+
+    data = [{
+        "id": c.id,
+        "title": c.title,
+        "message": c.message,
+        "response": c.response,
+        "status": c.status,
+        "created_at": c.created_at.strftime("%Y-%m-%d %H:%M"),
+    } for c in complaints]
+
+    return ApiResponse.success(data)
+
+# Doctor responds to complaint
+@inventory.route('/complaints/<int:id>/respond', methods=['POST'])
+@jwt_required()
+def respond_complaint(id):
+    user_email = get_jwt_identity()
+    user = User.query.filter_by(email=user_email).first()
+
+    if not user:
+        return ApiResponse.error("User not found"), 404
+
+    if user.role != "doctor":
+        return ApiResponse.error("Only doctors can respond"), 403
+
+    complaint = Complaint.query.get_or_404(id)
+    if complaint.status != 'pending':
+        return ApiResponse.error("Complaint already responded to"), 400
+
+    data = request.get_json()
+    response = data.get('response')
+
+    if not response:
+        return ApiResponse.error("Response is required"), 400
+
+    complaint.response = response
+    complaint.status = 'responded'
+    db.session.commit()
+
+    return ApiResponse.success({}, message="Response submitted")

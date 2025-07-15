@@ -16,6 +16,7 @@ def register():
     username = data.get("username")
     email = data.get("email")
     password = data.get("password")
+    role = data.get('role') 
 
     if not username or not email or not password:
         return ApiResponse.error("All fields are required"), 400
@@ -26,7 +27,7 @@ def register():
         return ApiResponse.error("User already exists"), 400
 
     hashed_password = generate_password_hash(password, method='pbkdf2:sha256', salt_length=8)
-    new_user = User(username=username, email=email, password=hashed_password)
+    new_user = User(username=username, email=email, password=hashed_password, role=role)
     response_data = {"username": new_user.username,"email": new_user.email}
 
     db.session.add(new_user)
@@ -49,13 +50,15 @@ def login():
     if not user or not check_password_hash(user.password, password):
         return ApiResponse.error("Invalid credentials"), 401
     
-    access_token = create_access_token(identity=str(user.email), expires_delta=timedelta(days=1))
+    access_token = create_access_token(identity=user.email, expires_delta=timedelta(days=1))
+
 
     user_data = {
         "id": user.id,
         "username": user.username,
         "email": user.email,
         "token": access_token,
+        "role": user.role,
         "created_at": user.created_at.strftime("%Y-%m-%d %H:%M:%S")
     }
 

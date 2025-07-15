@@ -8,6 +8,7 @@ const Register = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [username, setUsername] = useState('');
+    const [role, setRole] = useState('');
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
     
@@ -18,7 +19,7 @@ const Register = () => {
         setError('');
         setLoading(true);
 
-        const signupData = { email, password, username, role: "patient" };
+        const signupData = { email, password, username, role };
         console.log("Data", signupData)
 
         try {
@@ -49,6 +50,13 @@ const Register = () => {
 
                     <label>Full Name</label>
                     <input type="text" value={username} onChange={(e) => setUsername(e.target.value)} className='border rounded-md p-2' placeholder='John Doe' required />
+
+                    <label>Role</label>
+                    <select className="form-select" value={role} onChange={(e) => setRole(e.target.value)} required>
+                        <option value="patient">Patient</option>
+                        <option value="doctor">Doctor</option>
+                    </select>
+
                     <label>Password</label>
                     <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} 
                         className='border rounded-md p-2' placeholder='********' required />
